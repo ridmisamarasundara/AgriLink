@@ -1,16 +1,52 @@
-import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  Image, 
-  StyleSheet, 
-  TouchableOpacity, 
-  Switch, 
-  ScrollView, 
-  SafeAreaView 
-} from 'react-native';
-import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import {
+  Image,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native';
+
+interface SettingsRowProps {
+  icon: keyof typeof Ionicons.glyphMap;
+  label: string;
+  value: boolean;
+  onValueChange: (value: boolean) => void;
+  showNotificationDot?: boolean;
+}
+
+const SettingsRow = ({
+  icon,
+  label,
+  value,
+  onValueChange,
+  showNotificationDot = false,
+}: SettingsRowProps) => {
+  return (
+    <View style={styles.settingRow}>
+      <View style={styles.leftContainer}>
+        <View style={styles.iconContainer}>
+          <Ionicons name={icon} size={22} color="black" />
+          {showNotificationDot && <View style={styles.notificationDot} />}
+        </View>
+        <Text style={styles.settingText}>{label}</Text>
+      </View>
+
+      <Switch
+        trackColor={{ false: "#767577", true: "#4ADE80" }}
+        thumbColor={value ? "#f4f3f4" : "#f4f3f4"}
+        onValueChange={onValueChange}
+        value={value}
+      />
+    </View>
+  );
+};
+
 
 export default function BuyerProfile() {
   const router = useRouter();
@@ -21,9 +57,8 @@ export default function BuyerProfile() {
   const toggleSwitch = () => setIsNotificationsEnabled(previousState => !previousState);
 
   const handleLogout = () => {
-    // Add your logout logic here (clear tokens, etc.)
     console.log("Logging out...");
-    router.replace('/'); // Redirect to landing or login
+    router.replace('/'); 
   };
 
   return (
@@ -38,6 +73,7 @@ export default function BuyerProfile() {
 
       <ScrollView contentContainerStyle={styles.container}>
         
+       
         <View style={styles.profileSection}>
           <View style={styles.avatarContainer}>
             <Image 
@@ -60,22 +96,14 @@ export default function BuyerProfile() {
           </View>
         </View>
 
-        <View style={styles.settingsSection}>
-          <View style={styles.settingRow}>
-            <View style={styles.settingLabel}>
-              <View style={styles.iconContainer}>
-                 <Ionicons name="notifications" size={22} color="black" />
-                 <View style={styles.notificationDot} />
-              </View>
-              <Text style={styles.settingText}>Notifications</Text>
-            </View>
-            <Switch
-              trackColor={{ false: "#767577", true: "#4ADE80" }}
-              thumbColor={isNotificationsEnabled ? "#f4f3f4" : "#f4f3f4"}
-              onValueChange={toggleSwitch}
-              value={isNotificationsEnabled}
-            />
-          </View>
+        <View style={styles.settingsContainer}>
+          <SettingsRow 
+            icon="notifications"
+            label="Notifications"
+            value={isNotificationsEnabled}
+            onValueChange={toggleSwitch}
+            showNotificationDot={true}
+          />
         </View>
 
       </ScrollView>
@@ -176,25 +204,28 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#000',
   },
-  settingsSection: {
-    backgroundColor: '#fff',
-    borderRadius: 15,
-    padding: 10,
+  
+  // Settings Row Styles
+  settingsContainer: {
     marginBottom: 20,
   },
   settingRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 10,
+    padding: 15, // Increased padding for better touch area
+    backgroundColor: '#fff', // White background (Specific to Buyer design)
+    borderRadius: 15,
   },
-  settingLabel: {
+  leftContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   iconContainer: {
     position: 'relative',
     marginRight: 15,
+    width: 24, // Fixed width for alignment
+    alignItems: 'center',
   },
   notificationDot: {
     position: 'absolute',
@@ -211,6 +242,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  
+  // Footer
   footer: {
     position: 'absolute',
     bottom: 30,
