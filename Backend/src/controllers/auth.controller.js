@@ -1,4 +1,4 @@
-const bcrypt = require("bcryptjs");
+const bcrypt = require('bcryptjs');
 const jwt = require("jsonwebtoken");
 const User = require("../models/User.model"); // make sure this path is correct
 require("dotenv").config();
